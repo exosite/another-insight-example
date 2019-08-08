@@ -1,0 +1,15 @@
+
+node_modules
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+*.sw[a-z]
+# Files that might appear on external disk
+.Spotlight-V100
+.Trashes
+.env
+tags
+*npm-debug.log
+coverage/
+

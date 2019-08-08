@@ -1,0 +1,1054 @@
+---
+swagger: "2.0"
+info:
+  description: "Example Insight\n"
+  version: "2.0"
+  title: "Example Insight"
+  contact:
+    name: "Michael Conrad Tadpol Tilstra"
+    email: "miketilstra@exosite.com"
+host: ".io"
+basePath: "/api/v1"
+tags:
+- name: "insight"
+  description: "Insight Module"
+schemes:
+- "https"
+consumes:
+- "application/json"
+produces:
+- "application/json"
+paths:
+  /:
+    get:
+      description: "Alive check"
+      operationId: "alive"
+      parameters: []
+      responses:
+        200:
+          description: "Solution successfully created"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      x-exosite-restricted: true
+      x-swagger-router-controller: "Default"
+  /{solution_id}:
+    post:
+      description: "Used by Murano to create a solution namespace."
+      operationId: "createSolution"
+      parameters:
+      - name: "solution_id"
+        in: "path"
+        description: "The solution identifier. Set automatically."
+        required: true
+        type: "string"
+        x-exosite-from: "solution_id"
+        x-exosite-restricted: true
+      responses:
+        200:
+          description: "Solution successfully created"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      x-exosite-restricted: true
+      x-swagger-router-controller: "Default"
+    delete:
+      description: "Used by Murano to remove a solution and clean its namespace."
+      operationId: "delSolution"
+      parameters:
+      - name: "solution_id"
+        in: "path"
+        description: "The solution identifier. Set automatically."
+        required: true
+        type: "string"
+        x-exosite-from: "solution_id"
+        x-exosite-restricted: true
+      responses:
+        205:
+          description: "Solution successfully removed."
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      x-exosite-restricted: true
+      x-swagger-router-controller: "Default"
+  /{solution_id}/info:
+    get:
+      description: "Get some info about this Insight"
+      operationId: "info"
+      parameters:
+      - name: "solution_id"
+        in: "path"
+        description: "The solution identifier. Set automatically by Murano at service\
+          \ call."
+        required: true
+        type: "string"
+        x-exosite-from: "solution_id"
+        x-exosite-restricted: true
+      responses:
+        200:
+          description: "Insight Functions successfully listed"
+          schema:
+            $ref: "#/definitions/InsightInfoResults"
+        default:
+          description: "Errors"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      x-swagger-router-controller: "Default"
+  /{solution_id}/insights:
+    post:
+      description: "Get a list of available Insight Functions and info about them"
+      operationId: "listInsights"
+      parameters:
+      - name: "solution_id"
+        in: "path"
+        description: "The solution identifier. Set automatically by Murano at service\
+          \ call."
+        required: true
+        type: "string"
+        x-exosite-from: "solution_id"
+        x-exosite-restricted: true
+      - in: "body"
+        name: "body"
+        description: "Get a list of available insight functions"
+        required: true
+        schema:
+          $ref: "#/definitions/InsightsFilterParams"
+      responses:
+        200:
+          description: "Insight Functions successfully listed"
+          schema:
+            $ref: "#/definitions/InsightListResults"
+        default:
+          description: "Errors"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      x-swagger-router-controller: "Default"
+  /{solution_id}/insight/{function_id}:
+    get:
+      description: "Get info about one Insight Function"
+      operationId: "infoInsight"
+      parameters:
+      - name: "solution_id"
+        in: "path"
+        description: "The solution identifier. Set automatically by Murano at service\
+          \ call."
+        required: true
+        type: "string"
+        x-exosite-from: "solution_id"
+        x-exosite-restricted: true
+      - name: "function_id"
+        in: "path"
+        description: "Identifier of function"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Insight Functions successfully listed"
+          schema:
+            $ref: "#/definitions/InsightInfo"
+        default:
+          description: "Errors"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      x-swagger-router-controller: "Default"
+  /{solution_id}/lifecycle:
+    post:
+      description: "Notifications of when a linkage that will call the process function\
+        \ is created or deleted.\n"
+      operationId: "lifecycle"
+      parameters:
+      - name: "solution_id"
+        in: "path"
+        description: "The solution identifier. Set automatically by Murano at service\
+          \ call."
+        required: true
+        type: "string"
+        x-exosite-from: "solution_id"
+        x-exosite-restricted: true
+      - in: "body"
+        name: "body"
+        description: "Lifecycle event"
+        required: true
+        schema:
+          $ref: "#/definitions/LifecycleEvent"
+      responses:
+        default:
+          description: "The response to this is ignored."
+      x-swagger-router-controller: "Default"
+  /{solution_id}/process:
+    post:
+      description: "Your function to process a bunch of Signal Data."
+      operationId: "process"
+      parameters:
+      - name: "solution_id"
+        in: "path"
+        description: "The solution identifier. Set automatically by Murano at service\
+          \ call."
+        required: true
+        type: "string"
+        x-exosite-from: "solution_id"
+        x-exosite-restricted: true
+      - in: "body"
+        name: "body"
+        description: "Data to process and arguments on how to process it"
+        required: true
+        schema:
+          $ref: "#/definitions/SignalDataObjectArray"
+      responses:
+        200:
+          description: "Data successfully"
+          schema:
+            $ref: "#/definitions/SignalDataArrayArray"
+        default:
+          description: "Error that stops the pipeline. Non-fatal errors should produce\
+            \ new signals on a separate outlet."
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      x-swagger-router-controller: "Default"
+definitions:
+  InsightInfoResults:
+    type: "object"
+    required:
+    - "group_id_required"
+    properties:
+      group_id_required:
+        type: "boolean"
+        description: "True if the listInsights requires group_id to be something to\
+          \ list functions."
+      name:
+        type: "string"
+        description: "Presented name"
+      description:
+        type: "string"
+        description: "Additional text about this insight. Markdown can be used."
+      wants_lifecycle_events:
+        type: "boolean"
+        description: "True if this insight wants to be notified when linkages using\
+          \ it are created and deleted.\nDefaults to false.\n"
+      translations:
+        type: "object"
+        description: "Translations of the name and description fields"
+        properties: {}
+    description: "Info about this Insight Module"
+    example:
+      group_id_required: true
+      translations: "{}"
+      name: "name"
+      description: "description"
+      wants_lifecycle_events: true
+  InsightsFilterParams:
+    type: "object"
+    required:
+    - "group_id"
+    properties:
+      group_id:
+        type: "string"
+        description: "Which group of insight functions to get.  The meaning of the\
+          \ contents is up to the Insight Module.\nIncluding ignoring it and always\
+          \ returning all.\n"
+      limit:
+        type: "integer"
+        description: "Limit how many insights to fetch"
+      offset:
+        type: "integer"
+        description: "Offset into the returned insights"
+    description: "Filter options for insight functions"
+    example:
+      offset: 6
+      group_id: "group_id"
+      limit: 0
+  SignalTypeInputInfo:
+    type: "object"
+    required:
+    - "name"
+    properties:
+      primitive_type:
+        type: "string"
+        description: "If present, the primitive type that the connecting signal must\
+          \ have"
+        enum:
+        - "NUMERIC"
+        - "STRING"
+        - "BOOLEAN"
+        - "JSON"
+      data_type:
+        type: "array"
+        description: "If present, the type that the connecting signal must have"
+        items:
+          type: "string"
+          description: "A required data type"
+      data_unit:
+        type: "array"
+        description: "If present, the units that the connecting signal must have"
+        items:
+          type: "string"
+          description: "A required unit."
+      tag:
+        type: "string"
+        description: "Optional tag to add to the SignalData for inlet matching"
+      name:
+        type: "string"
+        description: "Name of this signal"
+      description:
+        type: "string"
+        description: "Optional text to help users."
+      translations:
+        type: "object"
+        description: "Translations of the name and description fields"
+        properties: {}
+    description: "What data type the incoming Signal must have.  One of `primitive_type`,\
+      \ `data_type` or `data_unit`\nshould be specified.\n"
+    example:
+      translations: "{}"
+      primitive_type: "NUMERIC"
+      data_type:
+      - "data_type"
+      - "data_type"
+      name: "name"
+      description: "description"
+      tag: "tag"
+      data_unit:
+      - "data_unit"
+      - "data_unit"
+  SignalTypeOutputInfo:
+    type: "object"
+    properties:
+      primitive_type:
+        type: "string"
+        description: "If present, the primitive type that the connecting signal must\
+          \ have"
+        enum:
+        - "NUMERIC"
+        - "STRING"
+        - "BOOLEAN"
+        - "JSON"
+      data_type:
+        type: "array"
+        description: "If present, the type that the connecting signal must have"
+        items:
+          type: "string"
+          description: "A required data type."
+      data_unit:
+        type: "array"
+        description: "If present, the unit that the connecting signal must have"
+        items:
+          type: "string"
+          description: "A required unit."
+    description: "What data type the incoming Signal must have.  One of `primitive_type`,\
+      \ `data_type` or `data_unit`\nshould be specified.\n"
+    example:
+      primitive_type: "NUMERIC"
+      data_type:
+      - "data_type"
+      - "data_type"
+      data_unit:
+      - "data_unit"
+      - "data_unit"
+  ConstantInfo:
+    type: "object"
+    required:
+    - "name"
+    - "type"
+    properties:
+      name:
+        type: "string"
+        description: "The name of this constant; This is not shown to users and is\
+          \ the code identifier for this constant."
+      type:
+        type: "string"
+        description: "What kind of value this constant accepts"
+        enum:
+        - "string"
+        - "number"
+        - "boolean"
+      description:
+        type: "string"
+        description: "Some words for the user about this constant"
+      enum:
+        type: "array"
+        description: "An array of allowed values."
+        items:
+          type: "string"
+          description: "An allowed value"
+      enum_presented:
+        type: "array"
+        description: "If present, the strings to display instead of the values in\
+          \ `enum`.  The length of this must match `enum`."
+        items:
+          type: "string"
+          description: "Presentable name for one value"
+      maximum:
+        type: "number"
+        description: "For number type, the largest it can be"
+      minimum:
+        type: "number"
+        description: "For number type, the smallest it can be"
+      multiple:
+        type: "boolean"
+        description: "When this is true, this constant will be an array of values\
+          \ instead of a single value.\nThe UI will present the user a way to enter\
+          \ this constant multiple times.\n"
+      translations:
+        type: "object"
+        description: "Translations of the name and description fields"
+        properties: {}
+    description: "A constant that needs to be provided by the user"
+    example:
+      translations: "{}"
+      enum_presented:
+      - "enum_presented"
+      - "enum_presented"
+      name: "name"
+      multiple: true
+      description: "description"
+      maximum: 1.46581298050294517310021547018550336360931396484375
+      type: "string"
+      minimum: 5.962133916683182377482808078639209270477294921875
+      enum: ""
+  InsightInfo:
+    type: "object"
+    required:
+    - "description"
+    - "id"
+    - "name"
+    properties:
+      id:
+        type: "string"
+        description: "The unique id for this insight function"
+      name:
+        type: "string"
+        description: "A human friendly name for this insight function"
+      description:
+        type: "string"
+        description: "A description of this insight function to display to users."
+      translations:
+        type: "object"
+        description: "Translations of the name and description fields"
+        properties: {}
+      type:
+        type: "string"
+        description: "What kind of insight this function is.  Determines how it gets\
+          \ used and how the UI\npresents it.  If omitted, then 'transform' is used.\n"
+        enum:
+        - "transform"
+        - "rule"
+        - "action"
+      asynchronous:
+        type: "boolean"
+        description: "When true, this function requires the Callback Info block since\
+          \ it will respond\nwith some or all of its results asynchronously.\n"
+      history:
+        type: "object"
+        description: "When this object is present, a timeseries query will be called\
+          \ and the results sent along\nto the function call.  The properties here\
+          \ will be used to augment the query.  Only the\nSignals connected to the\
+          \ calling of this function will be queried.\n"
+        additionalProperties:
+          $ref: "#/definitions/InsightInfo_history"
+      constants:
+        type: "array"
+        description: "Additional user specified values to pass to this insight function"
+        items:
+          $ref: "#/definitions/ConstantInfo"
+      constants_multiple_maximum:
+        type: "number"
+        description: "If there are constants with multiple set to true, this states\
+          \ the maximum number of times the\nconstants can be repeated. (The maximum\
+          \ size of the arrays.)\nIf unspecified then the UI can apply any limit,\
+          \ including none.\n"
+      inlets:
+        type: "array"
+        description: "The kinds of data that can be connected. (This is an unordered\
+          \ set)"
+        items:
+          $ref: "#/definitions/SignalTypeInputInfo"
+        maxItems: 5
+      outlets:
+        type: "array"
+        description: "What kind of data each output will produce. (This is an ordered\
+          \ array)"
+        items:
+          $ref: "#/definitions/SignalTypeOutputInfo"
+        maxItems: 5
+    description: "One insight function"
+    example:
+      inlets:
+      - translations: "{}"
+        primitive_type: "NUMERIC"
+        data_type:
+        - "data_type"
+        - "data_type"
+        name: "name"
+        description: "description"
+        tag: "tag"
+        data_unit:
+        - "data_unit"
+        - "data_unit"
+      - translations: "{}"
+        primitive_type: "NUMERIC"
+        data_type:
+        - "data_type"
+        - "data_type"
+        name: "name"
+        description: "description"
+        tag: "tag"
+        data_unit:
+        - "data_unit"
+        - "data_unit"
+      - translations: "{}"
+        primitive_type: "NUMERIC"
+        data_type:
+        - "data_type"
+        - "data_type"
+        name: "name"
+        description: "description"
+        tag: "tag"
+        data_unit:
+        - "data_unit"
+        - "data_unit"
+      - translations: "{}"
+        primitive_type: "NUMERIC"
+        data_type:
+        - "data_type"
+        - "data_type"
+        name: "name"
+        description: "description"
+        tag: "tag"
+        data_unit:
+        - "data_unit"
+        - "data_unit"
+      - translations: "{}"
+        primitive_type: "NUMERIC"
+        data_type:
+        - "data_type"
+        - "data_type"
+        name: "name"
+        description: "description"
+        tag: "tag"
+        data_unit:
+        - "data_unit"
+        - "data_unit"
+      constants_multiple_maximum: 5.63737665663332876420099637471139430999755859375
+      translations: "{}"
+      asynchronous: true
+      name: "name"
+      description: "description"
+      outlets:
+      - primitive_type: "NUMERIC"
+        data_type:
+        - "data_type"
+        - "data_type"
+        data_unit:
+        - "data_unit"
+        - "data_unit"
+      - primitive_type: "NUMERIC"
+        data_type:
+        - "data_type"
+        - "data_type"
+        data_unit:
+        - "data_unit"
+        - "data_unit"
+      - primitive_type: "NUMERIC"
+        data_type:
+        - "data_type"
+        - "data_type"
+        data_unit:
+        - "data_unit"
+        - "data_unit"
+      - primitive_type: "NUMERIC"
+        data_type:
+        - "data_type"
+        - "data_type"
+        data_unit:
+        - "data_unit"
+        - "data_unit"
+      - primitive_type: "NUMERIC"
+        data_type:
+        - "data_type"
+        - "data_type"
+        data_unit:
+        - "data_unit"
+        - "data_unit"
+      id: "id"
+      history:
+        key:
+          template: "template"
+          constant: "constant"
+      constants:
+      - translations: "{}"
+        enum_presented:
+        - "enum_presented"
+        - "enum_presented"
+        name: "name"
+        multiple: true
+        description: "description"
+        maximum: 1.46581298050294517310021547018550336360931396484375
+        type: "string"
+        minimum: 5.962133916683182377482808078639209270477294921875
+        enum: ""
+      - translations: "{}"
+        enum_presented:
+        - "enum_presented"
+        - "enum_presented"
+        name: "name"
+        multiple: true
+        description: "description"
+        maximum: 1.46581298050294517310021547018550336360931396484375
+        type: "string"
+        minimum: 5.962133916683182377482808078639209270477294921875
+        enum: ""
+      type: "transform"
+  InsightListResults:
+    type: "object"
+    required:
+    - "count"
+    - "insights"
+    - "total"
+    properties:
+      total:
+        type: "integer"
+        description: "The total number of insight functions in this group"
+      count:
+        type: "integer"
+        description: "Number of insight functions returned"
+      insights:
+        type: "array"
+        description: "The insight functions"
+        items:
+          $ref: "#/definitions/InsightInfo"
+    description: "The found insight functions with count info"
+    example:
+      total: 0
+      insights:
+      - inlets:
+        - translations: "{}"
+          primitive_type: "NUMERIC"
+          data_type:
+          - "data_type"
+          - "data_type"
+          name: "name"
+          description: "description"
+          tag: "tag"
+          data_unit:
+          - "data_unit"
+          - "data_unit"
+        - translations: "{}"
+          primitive_type: "NUMERIC"
+          data_type:
+          - "data_type"
+          - "data_type"
+          name: "name"
+          description: "description"
+          tag: "tag"
+          data_unit:
+          - "data_unit"
+          - "data_unit"
+        - translations: "{}"
+          primitive_type: "NUMERIC"
+          data_type:
+          - "data_type"
+          - "data_type"
+          name: "name"
+          description: "description"
+          tag: "tag"
+          data_unit:
+          - "data_unit"
+          - "data_unit"
+        - translations: "{}"
+          primitive_type: "NUMERIC"
+          data_type:
+          - "data_type"
+          - "data_type"
+          name: "name"
+          description: "description"
+          tag: "tag"
+          data_unit:
+          - "data_unit"
+          - "data_unit"
+        - translations: "{}"
+          primitive_type: "NUMERIC"
+          data_type:
+          - "data_type"
+          - "data_type"
+          name: "name"
+          description: "description"
+          tag: "tag"
+          data_unit:
+          - "data_unit"
+          - "data_unit"
+        constants_multiple_maximum: 5.63737665663332876420099637471139430999755859375
+        translations: "{}"
+        asynchronous: true
+        name: "name"
+        description: "description"
+        outlets:
+        - primitive_type: "NUMERIC"
+          data_type:
+          - "data_type"
+          - "data_type"
+          data_unit:
+          - "data_unit"
+          - "data_unit"
+        - primitive_type: "NUMERIC"
+          data_type:
+          - "data_type"
+          - "data_type"
+          data_unit:
+          - "data_unit"
+          - "data_unit"
+        - primitive_type: "NUMERIC"
+          data_type:
+          - "data_type"
+          - "data_type"
+          data_unit:
+          - "data_unit"
+          - "data_unit"
+        - primitive_type: "NUMERIC"
+          data_type:
+          - "data_type"
+          - "data_type"
+          data_unit:
+          - "data_unit"
+          - "data_unit"
+        - primitive_type: "NUMERIC"
+          data_type:
+          - "data_type"
+          - "data_type"
+          data_unit:
+          - "data_unit"
+          - "data_unit"
+        id: "id"
+        history:
+          key:
+            template: "template"
+            constant: "constant"
+        constants:
+        - translations: "{}"
+          enum_presented:
+          - "enum_presented"
+          - "enum_presented"
+          name: "name"
+          multiple: true
+          description: "description"
+          maximum: 1.46581298050294517310021547018550336360931396484375
+          type: "string"
+          minimum: 5.962133916683182377482808078639209270477294921875
+          enum: ""
+        - translations: "{}"
+          enum_presented:
+          - "enum_presented"
+          - "enum_presented"
+          name: "name"
+          multiple: true
+          description: "description"
+          maximum: 1.46581298050294517310021547018550336360931396484375
+          type: "string"
+          minimum: 5.962133916683182377482808078639209270477294921875
+          enum: ""
+        type: "transform"
+      - inlets:
+        - translations: "{}"
+          primitive_type: "NUMERIC"
+          data_type:
+          - "data_type"
+          - "data_type"
+          name: "name"
+          description: "description"
+          tag: "tag"
+          data_unit:
+          - "data_unit"
+          - "data_unit"
+        - translations: "{}"
+          primitive_type: "NUMERIC"
+          data_type:
+          - "data_type"
+          - "data_type"
+          name: "name"
+          description: "description"
+          tag: "tag"
+          data_unit:
+          - "data_unit"
+          - "data_unit"
+        - translations: "{}"
+          primitive_type: "NUMERIC"
+          data_type:
+          - "data_type"
+          - "data_type"
+          name: "name"
+          description: "description"
+          tag: "tag"
+          data_unit:
+          - "data_unit"
+          - "data_unit"
+        - translations: "{}"
+          primitive_type: "NUMERIC"
+          data_type:
+          - "data_type"
+          - "data_type"
+          name: "name"
+          description: "description"
+          tag: "tag"
+          data_unit:
+          - "data_unit"
+          - "data_unit"
+        - translations: "{}"
+          primitive_type: "NUMERIC"
+          data_type:
+          - "data_type"
+          - "data_type"
+          name: "name"
+          description: "description"
+          tag: "tag"
+          data_unit:
+          - "data_unit"
+          - "data_unit"
+        constants_multiple_maximum: 5.63737665663332876420099637471139430999755859375
+        translations: "{}"
+        asynchronous: true
+        name: "name"
+        description: "description"
+        outlets:
+        - primitive_type: "NUMERIC"
+          data_type:
+          - "data_type"
+          - "data_type"
+          data_unit:
+          - "data_unit"
+          - "data_unit"
+        - primitive_type: "NUMERIC"
+          data_type:
+          - "data_type"
+          - "data_type"
+          data_unit:
+          - "data_unit"
+          - "data_unit"
+        - primitive_type: "NUMERIC"
+          data_type:
+          - "data_type"
+          - "data_type"
+          data_unit:
+          - "data_unit"
+          - "data_unit"
+        - primitive_type: "NUMERIC"
+          data_type:
+          - "data_type"
+          - "data_type"
+          data_unit:
+          - "data_unit"
+          - "data_unit"
+        - primitive_type: "NUMERIC"
+          data_type:
+          - "data_type"
+          - "data_type"
+          data_unit:
+          - "data_unit"
+          - "data_unit"
+        id: "id"
+        history:
+          key:
+            template: "template"
+            constant: "constant"
+        constants:
+        - translations: "{}"
+          enum_presented:
+          - "enum_presented"
+          - "enum_presented"
+          name: "name"
+          multiple: true
+          description: "description"
+          maximum: 1.46581298050294517310021547018550336360931396484375
+          type: "string"
+          minimum: 5.962133916683182377482808078639209270477294921875
+          enum: ""
+        - translations: "{}"
+          enum_presented:
+          - "enum_presented"
+          - "enum_presented"
+          name: "name"
+          multiple: true
+          description: "description"
+          maximum: 1.46581298050294517310021547018550336360931396484375
+          type: "string"
+          minimum: 5.962133916683182377482808078639209270477294921875
+          enum: ""
+        type: "transform"
+      count: 6
+  LifecycleEvent:
+    type: "object"
+    properties:
+      event:
+        type: "string"
+        description: "What action caused this event"
+        pattern: "(create|delete|update)"
+      id:
+        type: "string"
+        description: "The unique id for the linkage that has the event.  This id will\
+          \ match in the calls to process."
+      args:
+        type: "object"
+        description: "The arguments for this linkage that will be also passed to each\
+          \ call of process."
+        properties: {}
+    description: "A Lifecycle event"
+    example:
+      args: "{}"
+      id: "id"
+      event: "event"
+  SignalData:
+    type: "object"
+    required:
+    - "generated"
+    - "origin"
+    - "ts"
+    properties:
+      tags:
+        type: "object"
+        description: "Tag-Value pairs to help ID the data. Used to tie the data back\
+          \ to an\nAsset or Device or other things.\n"
+        additionalProperties:
+          type: "string"
+          description: "Value for a tag"
+          minLength: 1
+      ts:
+        type: "integer"
+        description: "Unix timestamp in microseconds of when the data originated"
+      gts:
+        type: "integer"
+        description: "Unix timestamp in microseconds of when this SignalData was generated"
+      origin:
+        type: "string"
+        description: "The original Publishing ID"
+        minLength: 1
+      generated:
+        type: "string"
+        description: "The Publishing ID that created this SignalData."
+        minLength: 1
+      ttl:
+        type: "integer"
+        description: "Value used to help prevent data from infinitely cycling"
+    description: "A single instance of a piece of data inside a signal."
+  HistoricalData:
+    type: "object"
+    description: "The history of signals.  Each signal id is the key, with an array\
+      \ of timestamp, value pairs."
+    additionalProperties:
+      type: "array"
+      description: "The history of signals.  Each signal id is the key, with an array\
+        \ of timestamp, value pairs."
+      items:
+        type: "object"
+        description: "One point in history"
+        properties:
+          ts:
+            type: "integer"
+            description: "Unix timestamp in microseconds of when the data was stored"
+          tags:
+            type: "object"
+            description: "Tag-Value pairs to help ID the data.  (Tags here are a subset\
+              \ of those in SignalData)"
+            additionalProperties:
+              type: "string"
+              description: "Value for a tag"
+              minLength: 1
+        required:
+        - "ts"
+  CallbackInfo:
+    type: "object"
+    properties:
+      url:
+        type: "string"
+        description: "The URL to post the results to."
+      token:
+        type: "string"
+        description: "The token to put in the AUTHORIZATION header."
+    description: "URL and auth token to use to send results if not immediately available."
+    example:
+      url: "url"
+      token: "token"
+  SignalDataArray:
+    type: "array"
+    description: "Array of Signal Data"
+    items:
+      $ref: "#/definitions/SignalData"
+  SignalDataArrayArray:
+    type: "array"
+    description: "Array of Array of Signal Data.  An array for each outlet, each outlet\
+      \ can have many signals."
+    items:
+      $ref: "#/definitions/SignalDataArray"
+  SignalDataObjectArray:
+    type: "object"
+    properties:
+      id:
+        type: "string"
+        description: "A unique ID for this instance of this function in an asset pipeline."
+      data:
+        $ref: "#/definitions/SignalDataArray"
+      history:
+        $ref: "#/definitions/HistoricalData"
+      cbi:
+        $ref: "#/definitions/CallbackInfo"
+      args:
+        $ref: "#/definitions/SignalDataObjectArray_args"
+    description: "The data and arguments to be processed."
+    example:
+      args:
+        group_id: "group_id"
+        function_id: "function_id"
+        constants: "{}"
+      data: ""
+      id: "id"
+      history: {}
+      cbi:
+        url: "url"
+        token: "token"
+  ErrorResponse:
+    type: "object"
+    properties:
+      message:
+        type: "string"
+        description: "Error message"
+      status:
+        type: "number"
+        description: "A numerical code for the error"
+      name:
+        type: "string"
+        description: "Error type"
+    description: "Error response that stops the pipeline."
+  InsightInfo_history:
+    properties:
+      constant:
+        type: "string"
+        description: "Which of this function's constants to use the value of here"
+      template:
+        type: "string"
+        description: "Which of this function's constants to use the value of here,\
+          \ fitted into a template\nstring.  The constants must be surrounded with\
+          \ '{{}}'.  For example '-{{days}}d'\n"
+    description: "An additional parameter to the query.  Use only one property. (value,\
+      \ constant, template)"
+    example:
+      template: "template"
+      constant: "constant"
+  SignalDataObjectArray_args:
+    properties:
+      function_id:
+        type: "string"
+        description: "Which insight function to run"
+      group_id:
+        type: "string"
+        description: "Which group_id this is under"
+      constants:
+        type: "object"
+        description: "Additional constant parameters for the selected function"
+        properties: {}
+    description: "Object of instance arguments."
+    example:
+      group_id: "group_id"
+      function_id: "function_id"
+      constants: "{}"
+x-exosite-init: "createSolution"
+x-exosite-gc: "delSolution"
