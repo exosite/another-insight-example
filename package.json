@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "connect": "^3.7.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "loglevel": "^1.6.3",
     "moment": "^2.24.0",
     "morgan": "^1.9.1",
