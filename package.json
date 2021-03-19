@@ -5,7 +5,6 @@
   "main": "index.js",
   "scripts": {
     "eslint": "node_modules/.bin/eslint --cache .",
-    "coveralls": "cat ./coverage/lcov.info | coveralls",
     "lint": "npm run eslint && npm run prettier",
     "prettier": "prettier --write \"{__{tests,mocks}__,controllers,service,utils}/**/*.js\" index.js",
     "prettier-fail-on-diff": "prettier \"{__{tests,mocks}__}/**/*.js\" index.js --list-different",
@@ -16,15 +15,14 @@
   },
   "dependencies": {
     "connect": "^3.7.0",
-    "lodash": "^4.17.15",
-    "loglevel": "^1.6.3",
-    "moment": "^2.24.0",
-    "morgan": "^1.9.1",
+    "lodash": "^4.17.21",
+    "loglevel": "^1.7.0",
+    "moment": "^2.29.0",
+    "morgan": "^1.10.0",
     "response-time": "^2.3.2",
     "swagger-tools": "^0.10.4"
   },
   "devDependencies": {
-    "coveralls": "^3.0.0",
     "eslint": "^6.1.0",
     "eslint-config-prettier": "^2.10.0",
     "eslint-config-standard": "^13.0.1",
@@ -33,8 +31,7 @@
     "eslint-plugin-prettier": "^2.7.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.0",
-    "jest": "^24.8.0",
-    "nodemon": "^1.18.4",
+    "nodemon": "^2.0.7",
     "prettier": "^1.18.2"
   },
   "author": "",
