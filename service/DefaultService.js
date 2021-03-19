@@ -15,7 +15,7 @@ exports.alive = function() {
 }
 
 /**
- * Used by Murano to create a solution namespace.
+ * When this Insight Module is added to a new ExoSense, this will get called.
  *
  * solution_id String The solution identifier. Set automatically.
  * no response value expected for this operation
@@ -28,7 +28,8 @@ exports.createSolution = function(solution_id) {
 }
 
 /**
- * Used by Murano to remove a solution and clean its namespace.
+ * When this Insight Module is removed from an ExoSense, this will get called.
+ * Also called if the ExoSense was deleted.
  *
  * solution_id String The solution identifier. Set automatically.
  * no response value expected for this operation
@@ -80,10 +81,12 @@ const insightFunctionList = {
     inlets: [{ primitive_type: 'NUMERIC', tag: 'A', name: 'What goes in' }],
     outlets: [{ primitive_type: 'NUMERIC', name: 'What comes out' }],
     action: {
-      onValue: (value, constants, history, solution_id) => {
+      // onValue() called for each data value; is passed only the value and constants.
+      onValue: (value, constants, solution_id) => {
         return Number(value) * constants.gain + constants.offset
       },
-      // onData: (data, args, history, solution_id) => {}
+      // onData() called for each data value; is passed entire SignalData object and all function args.
+      // onData: (data, args, solution_id) => {}
     },
   },
 }
@@ -159,10 +162,10 @@ exports.listInsights = function(solution_id, body) {
   })
 }
 
-async function processMany(data, args, history, solutionId, work_fn) {
+async function processMany(data, args, solutionId, work_fn) {
   // Fan these all out.
   const promises = data.map(i => {
-    return work_fn(i, args, history, solutionId)
+    return work_fn(i, args, solutionId)
   })
 
   const collected = await Promise.all(promises)
@@ -190,11 +193,10 @@ async function processMany(data, args, history, solutionId, work_fn) {
 function build_fn(solution_id, function_id) {
   if (_.has(insightFunctionList, `${function_id}.action.onValue`)) {
     const onValue = _.get(insightFunctionList, `${function_id}.action.onValue`)
-    return (data, args, history, sol_id) => {
+    return (data, args, sol_id) => {
       const res_value = onValue(
         _.get(data, 'value', 0),
         _.get(args, 'constants', {}),
-        history,
         solution_id
       )
 
@@ -217,10 +219,9 @@ function build_fn(solution_id, function_id) {
  **/
 exports.process = function(solution_id, body) {
   return new Promise(async (resolve, reject) => {
-    log.debug(body)
-
-    const { data = [], args = {}, history = {} } = body
+    const { data = [], args = {} } = body
     const { function_id = '' } = args
+    log.debug(data)
 
     if (!_.has(insightFunctionList, function_id)) {
       // eslint-disable-next-line prefer-promise-reject-errors
@@ -234,7 +235,7 @@ exports.process = function(solution_id, body) {
     }
     const work_fn = build_fn(solution_id, function_id)
 
-    const result = await processMany(data, args, history, solution_id, work_fn)
+    const result = await processMany(data, args, solution_id, work_fn)
     resolve(result)
   })
 }
