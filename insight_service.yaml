@@ -4,13 +4,13 @@ swagger: '2.0'
 #                           Service Metadata                                   #
 ################################################################################
 info:
-  version: '2.0'
+  version: "1.0"
   title: Example Insight
   description: |
     Example Insight
   contact:
-    name: Michael Conrad Tadpol Tilstra
-    email: miketilstra@exosite.com
+    name: Exosite
+    email: support@exosite.com
 
 ################################################################################
 #                            API Information                                   #
@@ -23,11 +23,11 @@ tags:
   - name: insight
     description: Insight Module
 schemes:
-  - https
+  - https  # Only https is supported.
 consumes:
-  - application/json
+  - application/json # Only JSON is supported.
 produces:
-  - application/json
+  - application/json # Only JSON is supported.
 
 ################################################################################
 #                          Solution lifecycle Events                           #
@@ -100,10 +100,10 @@ paths:
       operationId: info
       description: Get some info about this Insight
       responses:
-        '200':
+        "200":
           description: Insight Functions successfully listed
           schema:
-            $ref: '#/definitions/InsightInfoResults'
+            $ref: "#/definitions/InsightInfoResults"
         default:
           description: Errors
           schema:
@@ -122,17 +122,17 @@ paths:
       operationId: listInsights
       description: Get a list of available Insight Functions and info about them
       parameters:
-        - name: body
-          in: body
-          description: Get a list of available insight functions
-          required: true
-          schema:
-            $ref: '#/definitions/InsightsFilterParams'
+      - name: body
+        in: body
+        description: Get a list of available insight functions
+        required: true
+        schema:
+          $ref: '#/definitions/InsightsFilterParams'
       responses:
-        '200':
+        "200":
           description: Insight Functions successfully listed
           schema:
-            $ref: '#/definitions/InsightListResults'
+            $ref: "#/definitions/InsightListResults"
         default:
           description: Errors
           schema:
@@ -156,10 +156,10 @@ paths:
           in: path
           description: Identifier of function
       responses:
-        '200':
+        "200":
           description: Insight Functions successfully listed
           schema:
-            $ref: '#/definitions/InsightInfo'
+            $ref: "#/definitions/InsightInfo"
         default:
           description: Errors
           schema:
@@ -200,19 +200,23 @@ paths:
         required: true
     post:
       operationId: process
-      description: Your function to process a bunch of Signal Data.
+      description: |
+        Your function to process a bunch of Signal Data.
+
+        It is good form to copy all the fields of a source SignalData into the new SignalData,
+        then update the properties according to your function.
       parameters:
         - name: body
           in: body
           description: Data to process and arguments on how to process it
           required: true
           schema:
-            $ref: '#/definitions/SignalDataObjectArray'
+            $ref: "#/definitions/SignalDataObjectArray"
       responses:
-        '200':
+        "200":
           description: Data successfully
           schema:
-            $ref: '#/definitions/SignalDataArrayArray'
+            $ref: "#/definitions/SignalDataArrayArray"
         default:
           description: Error that stops the pipeline.
             Non-fatal errors should produce new signals on a separate outlet.
@@ -244,7 +248,7 @@ definitions:
       translations:
         type: object
         description: Translations of the name and description fields
-        additional_properties:
+        additionalProperties:
           type: object
           description: Keyed by each translated language code
           properties:
@@ -308,7 +312,7 @@ definitions:
       translations:
         type: object
         description: Translations of the name and description fields
-        additional_properties:
+        additionalProperties:
           type: object
           description: Keyed by each translated language code
           properties:
@@ -341,6 +345,35 @@ definitions:
         items:
           type: string
           description: A required unit.
+      name:
+        type: string
+        description: Name of this outlet
+      description:
+        type: string
+        description: Optional text to help users.
+      suggested_name:
+        type: string
+        description: |
+          A suggestion for what to name signals that get created for this outlet.
+          This may include `{}` to indicate where to place the function name.
+      translations:
+        type: object
+        description: Translations of the name and description fields
+        additionalProperties:
+          type: object
+          description: Keyed by each translated language code 
+          properties:
+            name:
+              type: string
+              description: Presented name
+            description:
+              type: string
+              description: Optional text to help users.
+            suggested_name:
+              type: string
+              description: |
+                A suggestion for what to name signals that get created for this outlet.
+                This may include `{}` to indicate where to place the function name.
 
   ConstantInfo:
     type: object
@@ -363,8 +396,11 @@ definitions:
         type: array
         description: An array of allowed values.
         items:
-          type: [string, number, boolean]
           description: An allowed value
+          oneOf:
+            - type: string
+            - type: number
+            - type: boolean
       enum_presented:
         type: array
         description: If present, the strings to display instead of the values in `enum`.  The length of this must match `enum`.
@@ -385,9 +421,9 @@ definitions:
       translations:
         type: object
         description: Translations of the name and description fields
-        additional_properties:
+        additionalProperties:
           type: object
-          description: Keyed by each translated language code
+          description: Keyed by each translated language code 
           properties:
             description:
               type: string
@@ -415,7 +451,7 @@ definitions:
       translations:
         type: object
         description: Translations of the name and description fields
-        additional_properties:
+        additionalProperties:
           type: object
           description: Keyed by each translated language code
           properties:
@@ -431,11 +467,6 @@ definitions:
         description: |
           What kind of insight this function is.  Determines how it gets used and how the UI
           presents it.  If omitted, then 'transform' is used.
-      asynchronous:
-        type: boolean
-        description: |
-          When true, this function requires the Callback Info block since it will respond
-          with some or all of its results asynchronously.
       history:
         type: object
         description: |
@@ -517,7 +548,7 @@ definitions:
       event:
         type: string
         description: What action caused this event
-        pattern: '(create|delete|update)'
+        pattern: "(create|delete)"
       id:
         type: string
         description: The unique id for the linkage that has the event.  This id will match in the calls to process.
@@ -589,17 +620,6 @@ definitions:
               minLength: 1
         required: [ts, value]
 
-  CallbackInfo:
-    type: object
-    description: URL and auth token to use to send results if not immediately available.
-    properties:
-      url:
-        type: string
-        description: The URL to post the results to.
-      token:
-        type: string
-        description: The token to put in the AUTHORIZATION header.
-
   SignalDataArray:
     type: array
     description: Array of Signal Data
@@ -623,8 +643,6 @@ definitions:
         $ref: '#/definitions/SignalDataArray'
       history:
         $ref: '#/definitions/HistoricalData'
-      cbi:
-        $ref: '#/definitions/CallbackInfo'
       args:
         type: object
         description: Object of instance arguments.
@@ -639,6 +657,7 @@ definitions:
             type: object
             description: Additional constant parameters for the selected function
 
+
   ErrorResponse:
     type: object
     description: Error response that stops the pipeline.
@@ -652,3 +671,5 @@ definitions:
       name:
         description: Error type
         type: string
+
+

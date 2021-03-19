@@ -2,11 +2,11 @@
 swagger: "2.0"
 info:
   description: "Example Insight\n"
-  version: "2.0"
+  version: "1.0"
   title: "Example Insight"
   contact:
-    name: "Michael Conrad Tadpol Tilstra"
-    email: "miketilstra@exosite.com"
+    name: "Exosite"
+    email: "support@exosite.com"
 host: ".io"
 basePath: "/api/v1"
 tags:
@@ -180,7 +180,9 @@ paths:
       x-swagger-router-controller: "Default"
   /{solution_id}/process:
     post:
-      description: "Your function to process a bunch of Signal Data."
+      description: "Your function to process a bunch of Signal Data.\n\nIt is good\
+        \ form to copy all the fields of a source SignalData into the new SignalData,\n\
+        then update the properties according to your function.\n"
       operationId: "process"
       parameters:
       - name: "solution_id"
@@ -231,11 +233,15 @@ definitions:
       translations:
         type: "object"
         description: "Translations of the name and description fields"
-        properties: {}
+        additionalProperties:
+          $ref: "#/definitions/InsightInfoResults_translations"
     description: "Info about this Insight Module"
     example:
       group_id_required: true
-      translations: "{}"
+      translations:
+        key:
+          name: "name"
+          description: "description"
       name: "name"
       description: "description"
       wants_lifecycle_events: true
@@ -298,11 +304,15 @@ definitions:
       translations:
         type: "object"
         description: "Translations of the name and description fields"
-        properties: {}
+        additionalProperties:
+          $ref: "#/definitions/SignalTypeInputInfo_translations"
     description: "What data type the incoming Signal must have.  One of `primitive_type`,\
       \ `data_type` or `data_unit`\nshould be specified.\n"
     example:
-      translations: "{}"
+      translations:
+        key:
+          name: "name"
+          description: "description"
       primitive_type: "NUMERIC"
       data_type:
       - "data_type"
@@ -337,16 +347,40 @@ definitions:
         items:
           type: "string"
           description: "A required unit."
+      name:
+        type: "string"
+        description: "Name of this outlet"
+      description:
+        type: "string"
+        description: "Optional text to help users."
+      suggested_name:
+        type: "string"
+        description: "A suggestion for what to name signals that get created for this\
+          \ outlet.\nThis may include `{}` to indicate where to place the function\
+          \ name.\n"
+      translations:
+        type: "object"
+        description: "Translations of the name and description fields"
+        additionalProperties:
+          $ref: "#/definitions/SignalTypeOutputInfo_translations"
     description: "What data type the incoming Signal must have.  One of `primitive_type`,\
       \ `data_type` or `data_unit`\nshould be specified.\n"
     example:
+      translations:
+        key:
+          name: "name"
+          description: "description"
+          suggested_name: "suggested_name"
       primitive_type: "NUMERIC"
       data_type:
       - "data_type"
       - "data_type"
+      name: "name"
+      description: "description"
       data_unit:
       - "data_unit"
       - "data_unit"
+      suggested_name: "suggested_name"
   ConstantInfo:
     type: "object"
     required:
@@ -371,7 +405,6 @@ definitions:
         type: "array"
         description: "An array of allowed values."
         items:
-          type: "string"
           description: "An allowed value"
       enum_presented:
         type: "array"
@@ -394,10 +427,16 @@ definitions:
       translations:
         type: "object"
         description: "Translations of the name and description fields"
-        properties: {}
+        additionalProperties:
+          $ref: "#/definitions/ConstantInfo_translations"
     description: "A constant that needs to be provided by the user"
     example:
-      translations: "{}"
+      translations:
+        key:
+          enum_presented:
+          - "enum_presented"
+          - "enum_presented"
+          description: "description"
       enum_presented:
       - "enum_presented"
       - "enum_presented"
@@ -407,7 +446,9 @@ definitions:
       maximum: 1.46581298050294517310021547018550336360931396484375
       type: "string"
       minimum: 5.962133916683182377482808078639209270477294921875
-      enum: ""
+      enum:
+      - ""
+      - ""
   InsightInfo:
     type: "object"
     required:
@@ -427,7 +468,8 @@ definitions:
       translations:
         type: "object"
         description: "Translations of the name and description fields"
-        properties: {}
+        additionalProperties:
+          $ref: "#/definitions/InsightInfo_translations"
       type:
         type: "string"
         description: "What kind of insight this function is.  Determines how it gets\
@@ -436,10 +478,6 @@ definitions:
         - "transform"
         - "rule"
         - "action"
-      asynchronous:
-        type: "boolean"
-        description: "When true, this function requires the Callback Info block since\
-          \ it will respond\nwith some or all of its results asynchronously.\n"
       history:
         type: "object"
         description: "When this object is present, a timeseries query will be called\
@@ -476,7 +514,10 @@ definitions:
     description: "One insight function"
     example:
       inlets:
-      - translations: "{}"
+      - translations:
+          key:
+            name: "name"
+            description: "description"
         primitive_type: "NUMERIC"
         data_type:
         - "data_type"
@@ -487,7 +528,10 @@ definitions:
         data_unit:
         - "data_unit"
         - "data_unit"
-      - translations: "{}"
+      - translations:
+          key:
+            name: "name"
+            description: "description"
         primitive_type: "NUMERIC"
         data_type:
         - "data_type"
@@ -498,7 +542,10 @@ definitions:
         data_unit:
         - "data_unit"
         - "data_unit"
-      - translations: "{}"
+      - translations:
+          key:
+            name: "name"
+            description: "description"
         primitive_type: "NUMERIC"
         data_type:
         - "data_type"
@@ -509,7 +556,10 @@ definitions:
         data_unit:
         - "data_unit"
         - "data_unit"
-      - translations: "{}"
+      - translations:
+          key:
+            name: "name"
+            description: "description"
         primitive_type: "NUMERIC"
         data_type:
         - "data_type"
@@ -520,7 +570,10 @@ definitions:
         data_unit:
         - "data_unit"
         - "data_unit"
-      - translations: "{}"
+      - translations:
+          key:
+            name: "name"
+            description: "description"
         primitive_type: "NUMERIC"
         data_type:
         - "data_type"
@@ -532,53 +585,100 @@ definitions:
         - "data_unit"
         - "data_unit"
       constants_multiple_maximum: 5.63737665663332876420099637471139430999755859375
-      translations: "{}"
-      asynchronous: true
+      translations:
+        key:
+          name: "name"
+          description: "description"
       name: "name"
       description: "description"
       outlets:
-      - primitive_type: "NUMERIC"
+      - translations:
+          key:
+            name: "name"
+            description: "description"
+            suggested_name: "suggested_name"
+        primitive_type: "NUMERIC"
         data_type:
         - "data_type"
         - "data_type"
+        name: "name"
+        description: "description"
         data_unit:
         - "data_unit"
         - "data_unit"
-      - primitive_type: "NUMERIC"
+        suggested_name: "suggested_name"
+      - translations:
+          key:
+            name: "name"
+            description: "description"
+            suggested_name: "suggested_name"
+        primitive_type: "NUMERIC"
         data_type:
         - "data_type"
         - "data_type"
+        name: "name"
+        description: "description"
         data_unit:
         - "data_unit"
         - "data_unit"
-      - primitive_type: "NUMERIC"
+        suggested_name: "suggested_name"
+      - translations:
+          key:
+            name: "name"
+            description: "description"
+            suggested_name: "suggested_name"
+        primitive_type: "NUMERIC"
         data_type:
         - "data_type"
         - "data_type"
+        name: "name"
+        description: "description"
         data_unit:
         - "data_unit"
         - "data_unit"
-      - primitive_type: "NUMERIC"
+        suggested_name: "suggested_name"
+      - translations:
+          key:
+            name: "name"
+            description: "description"
+            suggested_name: "suggested_name"
+        primitive_type: "NUMERIC"
         data_type:
         - "data_type"
         - "data_type"
+        name: "name"
+        description: "description"
         data_unit:
         - "data_unit"
         - "data_unit"
-      - primitive_type: "NUMERIC"
+        suggested_name: "suggested_name"
+      - translations:
+          key:
+            name: "name"
+            description: "description"
+            suggested_name: "suggested_name"
+        primitive_type: "NUMERIC"
         data_type:
         - "data_type"
         - "data_type"
+        name: "name"
+        description: "description"
         data_unit:
         - "data_unit"
         - "data_unit"
+        suggested_name: "suggested_name"
       id: "id"
       history:
         key:
           template: "template"
           constant: "constant"
       constants:
-      - translations: "{}"
+      - translations:
+          key:
+            enum_presented:
+            - "enum_presented"
+            - "enum_presented"
+            description: "description"
         enum_presented:
         - "enum_presented"
         - "enum_presented"
@@ -588,8 +688,15 @@ definitions:
         maximum: 1.46581298050294517310021547018550336360931396484375
         type: "string"
         minimum: 5.962133916683182377482808078639209270477294921875
-        enum: ""
-      - translations: "{}"
+        enum:
+        - ""
+        - ""
+      - translations:
+          key:
+            enum_presented:
+            - "enum_presented"
+            - "enum_presented"
+            description: "description"
         enum_presented:
         - "enum_presented"
         - "enum_presented"
@@ -599,7 +706,9 @@ definitions:
         maximum: 1.46581298050294517310021547018550336360931396484375
         type: "string"
         minimum: 5.962133916683182377482808078639209270477294921875
-        enum: ""
+        enum:
+        - ""
+        - ""
       type: "transform"
   InsightListResults:
     type: "object"
@@ -624,7 +733,10 @@ definitions:
       total: 0
       insights:
       - inlets:
-        - translations: "{}"
+        - translations:
+            key:
+              name: "name"
+              description: "description"
           primitive_type: "NUMERIC"
           data_type:
           - "data_type"
@@ -635,7 +747,10 @@ definitions:
           data_unit:
           - "data_unit"
           - "data_unit"
-        - translations: "{}"
+        - translations:
+            key:
+              name: "name"
+              description: "description"
           primitive_type: "NUMERIC"
           data_type:
           - "data_type"
@@ -646,7 +761,10 @@ definitions:
           data_unit:
           - "data_unit"
           - "data_unit"
-        - translations: "{}"
+        - translations:
+            key:
+              name: "name"
+              description: "description"
           primitive_type: "NUMERIC"
           data_type:
           - "data_type"
@@ -657,7 +775,10 @@ definitions:
           data_unit:
           - "data_unit"
           - "data_unit"
-        - translations: "{}"
+        - translations:
+            key:
+              name: "name"
+              description: "description"
           primitive_type: "NUMERIC"
           data_type:
           - "data_type"
@@ -668,7 +789,10 @@ definitions:
           data_unit:
           - "data_unit"
           - "data_unit"
-        - translations: "{}"
+        - translations:
+            key:
+              name: "name"
+              description: "description"
           primitive_type: "NUMERIC"
           data_type:
           - "data_type"
@@ -680,53 +804,100 @@ definitions:
           - "data_unit"
           - "data_unit"
         constants_multiple_maximum: 5.63737665663332876420099637471139430999755859375
-        translations: "{}"
-        asynchronous: true
+        translations:
+          key:
+            name: "name"
+            description: "description"
         name: "name"
         description: "description"
         outlets:
-        - primitive_type: "NUMERIC"
+        - translations:
+            key:
+              name: "name"
+              description: "description"
+              suggested_name: "suggested_name"
+          primitive_type: "NUMERIC"
           data_type:
           - "data_type"
           - "data_type"
+          name: "name"
+          description: "description"
           data_unit:
           - "data_unit"
           - "data_unit"
-        - primitive_type: "NUMERIC"
+          suggested_name: "suggested_name"
+        - translations:
+            key:
+              name: "name"
+              description: "description"
+              suggested_name: "suggested_name"
+          primitive_type: "NUMERIC"
           data_type:
           - "data_type"
           - "data_type"
+          name: "name"
+          description: "description"
           data_unit:
           - "data_unit"
           - "data_unit"
-        - primitive_type: "NUMERIC"
+          suggested_name: "suggested_name"
+        - translations:
+            key:
+              name: "name"
+              description: "description"
+              suggested_name: "suggested_name"
+          primitive_type: "NUMERIC"
           data_type:
           - "data_type"
           - "data_type"
+          name: "name"
+          description: "description"
           data_unit:
           - "data_unit"
           - "data_unit"
-        - primitive_type: "NUMERIC"
+          suggested_name: "suggested_name"
+        - translations:
+            key:
+              name: "name"
+              description: "description"
+              suggested_name: "suggested_name"
+          primitive_type: "NUMERIC"
           data_type:
           - "data_type"
           - "data_type"
+          name: "name"
+          description: "description"
           data_unit:
           - "data_unit"
           - "data_unit"
-        - primitive_type: "NUMERIC"
+          suggested_name: "suggested_name"
+        - translations:
+            key:
+              name: "name"
+              description: "description"
+              suggested_name: "suggested_name"
+          primitive_type: "NUMERIC"
           data_type:
           - "data_type"
           - "data_type"
+          name: "name"
+          description: "description"
           data_unit:
           - "data_unit"
           - "data_unit"
+          suggested_name: "suggested_name"
         id: "id"
         history:
           key:
             template: "template"
             constant: "constant"
         constants:
-        - translations: "{}"
+        - translations:
+            key:
+              enum_presented:
+              - "enum_presented"
+              - "enum_presented"
+              description: "description"
           enum_presented:
           - "enum_presented"
           - "enum_presented"
@@ -736,8 +907,15 @@ definitions:
           maximum: 1.46581298050294517310021547018550336360931396484375
           type: "string"
           minimum: 5.962133916683182377482808078639209270477294921875
-          enum: ""
-        - translations: "{}"
+          enum:
+          - ""
+          - ""
+        - translations:
+            key:
+              enum_presented:
+              - "enum_presented"
+              - "enum_presented"
+              description: "description"
           enum_presented:
           - "enum_presented"
           - "enum_presented"
@@ -747,10 +925,15 @@ definitions:
           maximum: 1.46581298050294517310021547018550336360931396484375
           type: "string"
           minimum: 5.962133916683182377482808078639209270477294921875
-          enum: ""
+          enum:
+          - ""
+          - ""
         type: "transform"
       - inlets:
-        - translations: "{}"
+        - translations:
+            key:
+              name: "name"
+              description: "description"
           primitive_type: "NUMERIC"
           data_type:
           - "data_type"
@@ -761,7 +944,10 @@ definitions:
           data_unit:
           - "data_unit"
           - "data_unit"
-        - translations: "{}"
+        - translations:
+            key:
+              name: "name"
+              description: "description"
           primitive_type: "NUMERIC"
           data_type:
           - "data_type"
@@ -772,7 +958,10 @@ definitions:
           data_unit:
           - "data_unit"
           - "data_unit"
-        - translations: "{}"
+        - translations:
+            key:
+              name: "name"
+              description: "description"
           primitive_type: "NUMERIC"
           data_type:
           - "data_type"
@@ -783,7 +972,10 @@ definitions:
           data_unit:
           - "data_unit"
           - "data_unit"
-        - translations: "{}"
+        - translations:
+            key:
+              name: "name"
+              description: "description"
           primitive_type: "NUMERIC"
           data_type:
           - "data_type"
@@ -794,7 +986,10 @@ definitions:
           data_unit:
           - "data_unit"
           - "data_unit"
-        - translations: "{}"
+        - translations:
+            key:
+              name: "name"
+              description: "description"
           primitive_type: "NUMERIC"
           data_type:
           - "data_type"
@@ -806,53 +1001,100 @@ definitions:
           - "data_unit"
           - "data_unit"
         constants_multiple_maximum: 5.63737665663332876420099637471139430999755859375
-        translations: "{}"
-        asynchronous: true
+        translations:
+          key:
+            name: "name"
+            description: "description"
         name: "name"
         description: "description"
         outlets:
-        - primitive_type: "NUMERIC"
+        - translations:
+            key:
+              name: "name"
+              description: "description"
+              suggested_name: "suggested_name"
+          primitive_type: "NUMERIC"
           data_type:
           - "data_type"
           - "data_type"
+          name: "name"
+          description: "description"
           data_unit:
           - "data_unit"
           - "data_unit"
-        - primitive_type: "NUMERIC"
+          suggested_name: "suggested_name"
+        - translations:
+            key:
+              name: "name"
+              description: "description"
+              suggested_name: "suggested_name"
+          primitive_type: "NUMERIC"
           data_type:
           - "data_type"
           - "data_type"
+          name: "name"
+          description: "description"
           data_unit:
           - "data_unit"
           - "data_unit"
-        - primitive_type: "NUMERIC"
+          suggested_name: "suggested_name"
+        - translations:
+            key:
+              name: "name"
+              description: "description"
+              suggested_name: "suggested_name"
+          primitive_type: "NUMERIC"
           data_type:
           - "data_type"
           - "data_type"
+          name: "name"
+          description: "description"
           data_unit:
           - "data_unit"
           - "data_unit"
-        - primitive_type: "NUMERIC"
+          suggested_name: "suggested_name"
+        - translations:
+            key:
+              name: "name"
+              description: "description"
+              suggested_name: "suggested_name"
+          primitive_type: "NUMERIC"
           data_type:
           - "data_type"
           - "data_type"
+          name: "name"
+          description: "description"
           data_unit:
           - "data_unit"
           - "data_unit"
-        - primitive_type: "NUMERIC"
+          suggested_name: "suggested_name"
+        - translations:
+            key:
+              name: "name"
+              description: "description"
+              suggested_name: "suggested_name"
+          primitive_type: "NUMERIC"
           data_type:
           - "data_type"
           - "data_type"
+          name: "name"
+          description: "description"
           data_unit:
           - "data_unit"
           - "data_unit"
+          suggested_name: "suggested_name"
         id: "id"
         history:
           key:
             template: "template"
             constant: "constant"
         constants:
-        - translations: "{}"
+        - translations:
+            key:
+              enum_presented:
+              - "enum_presented"
+              - "enum_presented"
+              description: "description"
           enum_presented:
           - "enum_presented"
           - "enum_presented"
@@ -862,8 +1104,15 @@ definitions:
           maximum: 1.46581298050294517310021547018550336360931396484375
           type: "string"
           minimum: 5.962133916683182377482808078639209270477294921875
-          enum: ""
-        - translations: "{}"
+          enum:
+          - ""
+          - ""
+        - translations:
+            key:
+              enum_presented:
+              - "enum_presented"
+              - "enum_presented"
+              description: "description"
           enum_presented:
           - "enum_presented"
           - "enum_presented"
@@ -873,7 +1122,9 @@ definitions:
           maximum: 1.46581298050294517310021547018550336360931396484375
           type: "string"
           minimum: 5.962133916683182377482808078639209270477294921875
-          enum: ""
+          enum:
+          - ""
+          - ""
         type: "transform"
       count: 6
   LifecycleEvent:
@@ -882,7 +1133,7 @@ definitions:
       event:
         type: "string"
         description: "What action caused this event"
-        pattern: "(create|delete|update)"
+        pattern: "(create|delete)"
       id:
         type: "string"
         description: "The unique id for the linkage that has the event.  This id will\
@@ -955,19 +1206,6 @@ definitions:
               minLength: 1
         required:
         - "ts"
-  CallbackInfo:
-    type: "object"
-    properties:
-      url:
-        type: "string"
-        description: "The URL to post the results to."
-      token:
-        type: "string"
-        description: "The token to put in the AUTHORIZATION header."
-    description: "URL and auth token to use to send results if not immediately available."
-    example:
-      url: "url"
-      token: "token"
   SignalDataArray:
     type: "array"
     description: "Array of Signal Data"
@@ -989,8 +1227,6 @@ definitions:
         $ref: "#/definitions/SignalDataArray"
       history:
         $ref: "#/definitions/HistoricalData"
-      cbi:
-        $ref: "#/definitions/CallbackInfo"
       args:
         $ref: "#/definitions/SignalDataObjectArray_args"
     description: "The data and arguments to be processed."
@@ -1002,9 +1238,6 @@ definitions:
       data: ""
       id: "id"
       history: {}
-      cbi:
-        url: "url"
-        token: "token"
   ErrorResponse:
     type: "object"
     properties:
@@ -1018,6 +1251,77 @@ definitions:
         type: "string"
         description: "Error type"
     description: "Error response that stops the pipeline."
+  InsightInfoResults_translations:
+    properties:
+      name:
+        type: "string"
+        description: "Presented name"
+      description:
+        type: "string"
+        description: "Additional text about this insight. Markdown can be used."
+    description: "Keyed by each translated language code"
+    example:
+      name: "name"
+      description: "description"
+  SignalTypeInputInfo_translations:
+    properties:
+      name:
+        type: "string"
+        description: "Presented name"
+      description:
+        type: "string"
+        description: "Optional text to help users."
+    description: "Keyed by each translated language code"
+    example:
+      name: "name"
+      description: "description"
+  SignalTypeOutputInfo_translations:
+    properties:
+      name:
+        type: "string"
+        description: "Presented name"
+      description:
+        type: "string"
+        description: "Optional text to help users."
+      suggested_name:
+        type: "string"
+        description: "A suggestion for what to name signals that get created for this\
+          \ outlet.\nThis may include `{}` to indicate where to place the function\
+          \ name.\n"
+    description: "Keyed by each translated language code"
+    example:
+      name: "name"
+      description: "description"
+      suggested_name: "suggested_name"
+  ConstantInfo_translations:
+    properties:
+      description:
+        type: "string"
+        description: "Some words for the user about this constant"
+      enum_presented:
+        type: "array"
+        description: "If present, the strings to display instead of the values in\
+          \ `enum`."
+        items:
+          type: "string"
+    description: "Keyed by each translated language code"
+    example:
+      enum_presented:
+      - "enum_presented"
+      - "enum_presented"
+      description: "description"
+  InsightInfo_translations:
+    properties:
+      name:
+        type: "string"
+        description: "A human friendly name for this insight function"
+      description:
+        type: "string"
+        description: "A description of this insight function to display to users."
+    description: "Keyed by each translated language code"
+    example:
+      name: "name"
+      description: "description"
   InsightInfo_history:
     properties:
       constant:
