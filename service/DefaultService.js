@@ -77,8 +77,8 @@ const insightFunctionList = {
     ],
     description: 'Compute a Linear Gain (result = gain * x + offset)',
     name: 'Linear Gain',
-    inlets: [{ primitive_type: 'NUMERIC' }],
-    outlets: [{ primitive_type: 'NUMERIC' }],
+    inlets: [{ primitive_type: 'NUMERIC', tag: 'A', name: 'What goes in' }],
+    outlets: [{ primitive_type: 'NUMERIC', name: 'What comes out' }],
     action: {
       onValue: (value, constants, history, solution_id) => {
         return Number(value) * constants.gain + constants.offset
