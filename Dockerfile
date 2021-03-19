@@ -1,4 +1,4 @@
-FROM node:dubnium
+FROM node:lts-alpine
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -17,4 +17,3 @@ COPY . .
 
 EXPOSE 5000
 CMD [ "npm", "start" ]
-
