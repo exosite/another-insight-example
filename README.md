@@ -27,7 +27,7 @@ docker build . -t example-insight
 docker run --rm -it -p 5000:5000 example-insight
 ```
 
-## Running
+## Deploying
 
 For each platform, we assume that you already have an account, and have installed and configured the tools.
 
@@ -65,11 +65,15 @@ Then re-deploying if necessary.
 
 ### Azure
 
-TODO.
+Follow this tutuoral, but using this repository instead:
+[Deploy and run a containerized web app with Azure App Service](https://docs.microsoft.com/en-us/learn/modules/deploy-run-container-app-service/)
 
-## Adding to Exchange and ExoSense®
+This will get the server up and running. Copy the host name that get assigned. Using that name to update the `host:` key
+in the following files: `insight_service.yaml` and `api/swagger.yaml`. Then re-deploy.
 
-Once the External Insight Module is up and running, we can add it to Exchange and then to ExoSense.
+## Adding to Murano Exchange and ExoSense®
+
+Once the External Insight Module is up and running, we can add it to Murano Exchange and then to ExoSense.
 
 ### Spot check the interface
 
