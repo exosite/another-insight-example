@@ -75,6 +75,8 @@ in the following files: `insight_service.yaml` and `api/swagger.yaml`. Then re-d
 
 Once the External Insight Module is up and running, we can add it to Murano Exchange and then to ExoSense.
 
+[Building a Custom Insight Guide](https://docs.exosite.io/insights/reference/building-insights-overview/) for more information on publishing.
+
 ### Spot check the interface
 
 Load the interface definition from `https://<the host name>/api-docs`, look for the top level `host:` key. Make
