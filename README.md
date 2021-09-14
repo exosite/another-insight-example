@@ -4,6 +4,10 @@ An example of how to build an External Insight Module (EIM) in nodeJS and built 
 
 This example also adds some boilerplate so that you can skip right to defining the External Insight Module Functions (EIMF).
 
+Additional Information:
+- [ExoSense Insight Schema](https://docs.exosite.io/schema/insight_transform_integration_schema/)
+- [Building a Custom Insight Guide](https://docs.exosite.io/insights/reference/building-insights-overview/)
+
 ## Local Debugging
 
 ### Directly
