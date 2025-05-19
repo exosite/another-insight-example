@@ -12,4 +12,5 @@ Icon
 tags
 *npm-debug.log
 coverage/
-
+dist/
+.eslintcache

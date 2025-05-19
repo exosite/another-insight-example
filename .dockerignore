@@ -1,3 +1,8 @@
-node_modules
-npm-debug.log
-
+*
+!api/swagger.yaml
+!src/
+!app.ts
+!index.ts
+!package.json
+!package-lock.json
+!tsconfig.json

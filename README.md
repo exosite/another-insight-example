@@ -5,6 +5,7 @@ An example of how to build an External Insight Module (EIM) in nodeJS and built 
 This example also adds some boilerplate so that you can skip right to defining the External Insight Module Functions (EIMF).
 
 Additional Information:
+
 - [ExoSense Insight Schema](https://docs.exosite.io/schema/insight_transform_integration_schema/)
 - [Building a Custom Insight Guide](https://docs.exosite.io/insights/reference/building-insights-overview/)
 
@@ -18,12 +19,6 @@ To run the server locally:
 npm start
 ```
 
-To view the Swagger UI interface:
-
-```sh
-open http://localhost:8080/docs
-```
-
 ### Via Docker
 
 ```sh
@@ -35,28 +30,9 @@ docker run --rm -it -p 5000:5000 example-insight
 
 For each platform, we assume that you already have an account, and have installed and configured the tools.
 
-### Heroku
+### On-Prem
 
-```sh
-# 1. Create a new application for the External Insight Module to run in
-heroku create
-# 2. Get the host name name out:
-heroku apps:info --json | jq -r .app.web_url
-```
-
-Use the host name to update the `host:` key in the following files:
-
-- insight_service.yaml
-- api/swagger.yaml
-
-```sh
-# 3. Commit the host updates
-git commit -a -m 'Update Host name keys'
-# 4. Build and push code
-git push heroku master
-# 5. Test to see if it is running should return the string "ok":
-curl https://<hostname>/api/v1/
-```
+TBD
 
 ### AWS
 
