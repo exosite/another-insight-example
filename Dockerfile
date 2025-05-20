@@ -1,19 +1,24 @@
-FROM node:lts-alpine
+FROM node:22-alpine AS base
+WORKDIR /app
+ENV NODE_ENV=production
 
-# Create app directory
-WORKDIR /usr/src/app
+FROM base AS builder
 
-# Install app dependencies
-# A wildcard is used to ensure both package.json AND package-lock.json are copied
-# where available (npm@5+)
-COPY package*.json ./
+COPY package*.json /app
 
-RUN npm install --only=production
-# If you are building your code for production
-# RUN npm install --only=production
+RUN npm ci --include=dev
 
-# Bundle app source
 COPY . .
 
-EXPOSE 5000
-CMD [ "npm", "start" ]
+RUN npm run build
+RUN npm prune --production
+
+FROM base AS release
+COPY --from=builder /app/dist /app
+COPY --from=builder /app/api/swagger.yaml /app/api/swagger.yaml
+COPY --from=builder /app/node_modules /app/node_modules
+
+EXPOSE 3000
+ENV PORT=3000
+
+ENTRYPOINT ["node", "index.js"]

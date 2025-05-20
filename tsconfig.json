@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "allowJs": false,
+    "esModuleInterop": true,
+    "inlineSourceMap": false,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "outDir": "./dist",
+    "target": "es2022",
+    "sourceMap": true
+  },
+  "include": ["./index.ts", "./app.ts", "src/**/*.ts"],
+  "exclude": ["node_modules", "**/*.test.ts"]
+}

@@ -1,39 +1,38 @@
 {
   "name": "insight_service",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Example Insight Service",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
-    "eslint": "node_modules/.bin/eslint --cache .",
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "eslint": "eslint --cache .",
     "lint": "npm run eslint && npm run prettier",
-    "prettier": "prettier --write \"{__{tests,mocks}__,controllers,service,utils}/**/*.js\" index.js",
-    "prettier-fail-on-diff": "prettier \"{__{tests,mocks}__}/**/*.js\" index.js --list-different",
-    "regen": "docker run --rm -v `pwd`:/local swaggerapi/swagger-codegen-cli generate -i /local/insight_service.yaml -l nodejs-server -o /local",
-    "start": "node index.js",
-    "watch": "nodemon -d 0.1 --ext 'js' --exec 'npm start'",
-    "test": "LOGLEVEL=SILENT jest"
+    "prettier": "prettier --write \"src/**/*.ts\" index.ts app.ts",
+    "prettier-fail-on-diff": "prettier \"src/**/*.ts\" index.ts app.ts --list-different",
+    "start": "ts-node index.ts"
   },
   "dependencies": {
-    "connect": "^3.7.0",
+    "express": "^5.1.0",
     "lodash": "^4.17.21",
-    "loglevel": "^1.7.0",
-    "moment": "^2.29.0",
+    "loglevel": "^1.9.2",
     "morgan": "^1.10.0",
-    "response-time": "^2.3.2",
-    "swagger-tools": "^0.10.4"
+    "response-time": "^2.3.3"
   },
   "devDependencies": {
-    "eslint": "^6.1.0",
-    "eslint-config-prettier": "^2.10.0",
-    "eslint-config-standard": "^13.0.1",
-    "eslint-plugin-import": "^2.18.2",
-    "eslint-plugin-node": "^9.1.0",
-    "eslint-plugin-prettier": "^2.7.0",
-    "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-standard": "^4.0.0",
-    "nodemon": "^2.0.7",
-    "prettier": "^1.18.2"
+    "@types/express": "^5.0.2",
+    "@types/lodash": "^4.17.16",
+    "@types/morgan": "^1.9.9",
+    "@types/response-time": "^2.3.8",
+    "@typescript-eslint/eslint-plugin": "^8.26.1",
+    "@typescript-eslint/parser": "^8.26.1",
+    "eslint": "^9.19.0",
+    "eslint-config-prettier": "^10.0.1",
+    "eslint-plugin-prettier": "^5.2.3",
+    "prettier": "^3.5.3",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
   },
-  "author": "",
+  "author": "Exosite",
   "license": "ISC"
 }
